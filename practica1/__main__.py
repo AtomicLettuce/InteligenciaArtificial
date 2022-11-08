@@ -1,3 +1,6 @@
+import sys
+sys.path.append('C:\\Users\\xvive\\OneDrive - Universitat de les Illes Balears\\Escriptori\\UIBB3\\IA\\ia_2022')
+
 from practica1 import agent, joc
 
 
