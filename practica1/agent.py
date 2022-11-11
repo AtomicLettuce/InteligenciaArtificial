@@ -7,6 +7,7 @@ ClauPercepcio:
 """
 from ia_2022 import entorn
 from practica1 import joc
+from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
 
 
 class Rana(joc.Rana):
@@ -19,4 +20,4 @@ class Rana(joc.Rana):
     def actua(
             self, percep: entorn.Percepcio
     ) -> entorn.Accio | tuple[entorn.Accio, object]:
-        pass
+        return AccionsRana.ESPERAR
