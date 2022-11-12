@@ -1,6 +1,5 @@
 import sys
-sys.path.append('C:\\Users\\xvive\\OneDrive - Universitat de les Illes Balears\\Escriptori\\UIBB3\\IA\\ia_2022')
-
+sys.path.append('C:\\Users\\lluis\\OneDrive\\Escritorio\\UIB\\3r\\IA\\INTELIGENCIAARTIFICIAL')
 from practica1 import agent, joc
 
 
