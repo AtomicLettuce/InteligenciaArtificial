@@ -1,6 +1,7 @@
 import sys
-sys.path.append('C:\\Users\\xvive\\OneDrive - Universitat de les Illes Balears\\Escriptori\\UIBB3\\IA\\InteligenciaArtificial')
-
+#Posar es directori des NOSTRE REPOSITORI 
+sys.path.append('C:\\Users\\xvive\\OneDrive - Universitat de les Illes Balears\\Escriptori\\UIBB3\\IA\\InteligenciaArtificial') #Cas Xavier
+sys.path.append('C:\\*POSAR DIRECTORI LLUÍS*') #Cas Lluís
 
 from practica1 import agent, joc
 

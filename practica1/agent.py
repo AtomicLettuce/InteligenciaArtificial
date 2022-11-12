@@ -11,6 +11,7 @@ from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
 
 
 class Rana(joc.Rana):
+    
     def __init__(self, *args, **kwargs):
         super(Rana, self).__init__(*args, **kwargs)
 
@@ -18,5 +19,5 @@ class Rana(joc.Rana):
         pass
 
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
-        
-        return AccionsRana.MOURE, Direccio.BAIX
+        print (percep[ClauPercepcio.PARETS])
+        return AccionsRana.ESPERAR
