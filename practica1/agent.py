@@ -18,5 +18,5 @@ class Rana(joc.Rana):
         pass
 
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
-        print ("holaaasfsdibhfiusydgfbuiyeuiybweuifbcynwekjjghbjhiuytfrdgcvbjhhuytrdfxcvbjuiytyrfdf")
-        return AccionsRana.ESPERAR
+        
+        return AccionsRana.MOURE, Direccio.BAIX

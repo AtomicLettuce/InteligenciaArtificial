@@ -1,5 +1,6 @@
 import sys
-sys.path.append('C:\\Users\\xvive\\OneDrive - Universitat de les Illes Balears\\Escriptori\\UIBB3\\IA\\ia_2022')
+sys.path.append('C:\\Users\\xvive\\OneDrive - Universitat de les Illes Balears\\Escriptori\\UIBB3\\IA\\InteligenciaArtificial')
+
 
 from practica1 import agent, joc
 
@@ -8,6 +9,7 @@ def main():
     rana = agent.Rana("Miquel")
     lab = joc.Laberint([rana], parets=True)
     lab.comencar()
+
 
 
 if __name__ == "__main__":
