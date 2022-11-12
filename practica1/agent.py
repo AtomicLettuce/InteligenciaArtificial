@@ -18,9 +18,8 @@ class Rana(joc.Rana):
     def pinta(self, display):
         pass
 
-    def actua(
-            self, percep: entorn.Percepcio
-    ) -> entorn.Accio | tuple[entorn.Accio, object]:
+    def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
+        print ("holaaasfsdibhfiusydgfbuiyeuiybweuifbcynwekjjghbjhiuytfrdgcvbjhhuytrdfxcvbjuiytyrfdf")
         return AccionsRana.ESPERAR
 
 class Estat:
