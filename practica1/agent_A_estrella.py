@@ -40,7 +40,7 @@ class Rana(joc.Rana):
     def cerca(self, estat_inicial):
         self.__oberts = PriorityQueue()
         self.__tancats=set()
-        self.oberts.put(estat_inicial.get_heuristica(), estat_inicial)
+        self.oberts.put(estat_inicial.calcular_heuristica(), estat_inicial)
 
         actual = None
 
@@ -48,5 +48,26 @@ class Rana(joc.Rana):
             _, actual=self.oberts.get()
             if actual in self.tancats:
                 continue
-            if actual.es_meta()
+            if actual.es_meta():
+                break
+
+            estats_fills=actual.genera_fills()
+            
+            for fill in estats_fills:
+                self.__oberts.put((fill.calcular_heuristica(),fill))
+            
+            self.__tancats.add(actual)
+
+            if actual.es_meta():
+                accions=[]
+                iterador=actual
+
+                while iterador.pare is not None:
+                    pare, accio=iterador.pare
+
+                    accions.append(accio)
+                    iterador=pare
+                
+                self.__accions=accions
+
 
