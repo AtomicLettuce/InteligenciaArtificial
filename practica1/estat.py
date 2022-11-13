@@ -2,16 +2,23 @@ from ia_2022 import entorn
 from practica1 import joc
 from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
 
+"""
+Posicio granota
+percep[ClauPercepcio.POSICIO]['Miquel'][0]
+
+Posicio Paret
+percep[ClauPercepcio.PARETs][0][0]
+"""
 class Estat:
 
     def init(self, info:tuple, pes:int, pare=None):
         #info son dos ints (coordX, coordY))
-        self.info=info
+        self.__info=info
         #pare és un estat i sa acció que l'ha generat
-        self.pare=pare
-        self.pes=pes
+        self.__pare=pare
+        self.__pes=pes
 
-    def eq(self, other: Estat) -> bool:
+    def eq(self, other) -> bool:
         return self.info[0] ==other.info[0] & self.info[1]==other.info[1]
 
     def es_meta(self) -> bool:
@@ -19,6 +26,12 @@ class Estat:
 
     def hash(self):
         return hash(tuple(self.info))
+
+    def __getitem__(self,key):
+        return self.__info[key]
+
+    def __setitem__(self, key, value):
+        self.__info[key] = value
 
     @property
     def info(self):
@@ -34,15 +47,22 @@ class Estat:
         return estats_generats
 
 
-    def es_legal(self) -> bool:
-        for i in ClauPercepcio.PARETS:
-            if percep[ClauPercepcio.POSICIO] == ClauPercepcio.PARETS[i]:
+    def es_legal(self,percep) -> bool:
+        print("es legal")
+
+        for i in range(len(percep[ClauPercepcio.PARETS])):
+            if ((percep[ClauPercepcio.POSICIO]['Miquel'][0] == percep[ClauPercepcio.PARETS][i][1]) 
+            and (percep[ClauPercepcio.POSICIO]['Miquel'][0] == percep[ClauPercepcio.PARETS][i][1])):
+                print("fals")
                 return False
-        for i in 2
-            if ClauPercepcio.POSICIO[i] >= ClauPercepcio.MIDA_TAULELL[i]:
+         
+        
+        for i in range(2):
+            if percep[ClauPercepcio.POSICIO]['Miquel'][i] >= percep[ClauPercepcio.MIDA_TAULELL][i]:
                 return False
-            if ClauPercepcio.POSICIO[i] < 0:
+            if percep[ClauPercepcio.POSICIO]['Miquel'][i] < 0:
                 return False
+        print("true")
         return True
 
     def calcular_heuristica(self)->int:
