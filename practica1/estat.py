@@ -33,9 +33,6 @@ class Estat:
     def __setitem__(self, key, value):
         self.__info[key] = value
 
-    @property
-    def info(self):
-        return self.info
 
 
     def genera_fill(self) -> list:
@@ -48,11 +45,10 @@ class Estat:
 
 
     def es_legal(self,percep) -> bool:
-        print("es legal")
-
+        print(self.__info['Miquel'])
         for i in range(len(percep[ClauPercepcio.PARETS])):
-            if ((percep[ClauPercepcio.POSICIO]['Miquel'][0] == percep[ClauPercepcio.PARETS][i][1]) 
-            and (percep[ClauPercepcio.POSICIO]['Miquel'][0] == percep[ClauPercepcio.PARETS][i][1])):
+            if ((percep[ClauPercepcio.POSICIO]['Miquel'][0] == percep[ClauPercepcio.PARETS][i][0]) 
+            and (percep[ClauPercepcio.POSICIO]['Miquel'][1] == percep[ClauPercepcio.PARETS][i][1])):
                 print("fals")
                 return False
          
