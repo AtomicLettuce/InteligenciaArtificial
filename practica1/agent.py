@@ -6,8 +6,9 @@ ClauPercepcio:
     PARETS = 2
 """
 from ia_2022 import entorn
-from practica1 import joc
+from practica1 import joc, agent_A_estrella
 from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
+from estat import Estat
 
 
 class Rana(joc.Rana):
@@ -19,5 +20,10 @@ class Rana(joc.Rana):
         pass
 
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
-        print (percep[ClauPercepcio.PARETS])
+
+        estat_inicial = Estat()
+        estat_inicial.init(percep[ClauPercepcio.POSICIO],0, pare=None)
+
+        estat_inicial.es_legal(percep)
         return AccionsRana.ESPERAR
+
