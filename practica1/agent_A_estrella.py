@@ -25,7 +25,8 @@ class Rana(joc.Rana):
 
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
 
-        estat_inicial=Estat(percep[ClauPercepcio.POSICIO],0, pare=None)
+        estat_inicial=Estat()
+        estat_inicial.init(percep[ClauPercepcio.POSICIO])
         if self.__accions is None:
             self.cerca(estat_inicial)
         

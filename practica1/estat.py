@@ -47,8 +47,9 @@ class Estat:
         return estats_generats
 
 
-    def es_legal(self,percep) -> bool:
+    def es_legal(self, percep) -> bool:
         print("es legal")
+        print(self.__info)
 
         for i in range(len(percep[ClauPercepcio.PARETS])):
             if ((percep[ClauPercepcio.POSICIO]['Miquel'][0] == percep[ClauPercepcio.PARETS][i][1]) 
