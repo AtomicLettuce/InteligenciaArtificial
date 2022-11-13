@@ -5,9 +5,14 @@ from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
 """
 Posicio granota
 percep[ClauPercepcio.POSICIO]['Miquel'][0]
+o
+self.info[0]
 
 Posicio Paret
 percep[ClauPercepcio.PARETs][0][0]
+
+Posicio pizza
+percep[ClauPercepio.OLOR][0]
 """
 class Estat:
 
@@ -21,8 +26,8 @@ class Estat:
     def eq(self, other) -> bool:
         return self.info[0] ==other.info[0] & self.info[1]==other.info[1]
 
-    def es_meta(self) -> bool:
-        return ClauPercepcio.OLOR[0]==self.info[0] & ClauPercepcio.OLOR[1]==self.info[1]
+    def es_meta(self,percep) -> bool:
+        return percep[ClauPercepcio.OLOR][0]==self.info['Miquel'][0] and percep[ClauPercepcio.OLOR[1]]==self.info['Miquel'][1]
 
     def hash(self):
         return hash(tuple(self.info))
@@ -45,14 +50,13 @@ class Estat:
 
 
     def es_legal(self,percep) -> bool:
-        print(self.__info['Miquel'])
+
         for i in range(len(percep[ClauPercepcio.PARETS])):
-            if ((percep[ClauPercepcio.POSICIO]['Miquel'][0] == percep[ClauPercepcio.PARETS][i][0]) 
-            and (percep[ClauPercepcio.POSICIO]['Miquel'][1] == percep[ClauPercepcio.PARETS][i][1])):
+            if ((self.__info['Miquel'][0] == percep[ClauPercepcio.PARETS][i][0]) 
+            and (self.__info['Miquel'][1] == percep[ClauPercepcio.PARETS][i][1])):
                 print("fals")
                 return False
-         
-        
+           
         for i in range(2):
             if percep[ClauPercepcio.POSICIO]['Miquel'][i] >= percep[ClauPercepcio.MIDA_TAULELL][i]:
                 return False
