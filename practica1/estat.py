@@ -25,9 +25,14 @@ class Estat:
 
     def eq(self, other) -> bool:
         return self.__posicio[0] ==other.__posicio[0] & self.__posicio[1]==other.__posicio[1]
+    
+    def __str__(self):
+        return "posició: "+str(self.__posicio)+" pare: "+str(self.__pare)+" pes"+ str(self.__pes)
 
     def es_meta(self,percep) -> bool:
-        return (percep[ClauPercepcio.OLOR][0]==self.__posicio[0]) and (percep[ClauPercepcio.OLOR][1]==self.__posicio[1])
+        if percep[ClauPercepcio.OLOR][0]==self.__posicio[0]and percep[ClauPercepcio.OLOR][1]==self.__posicio[1]:
+            return True
+        return False #(percep[ClauPercepcio.OLOR][0]==self.__posicio[0]) and (percep[ClauPercepcio.OLOR][1]==self.__posicio[1])
 
     def hash(self):
         return hash(tuple(self.__posicio))
@@ -42,18 +47,16 @@ class Estat:
         self.__posicio[key] = value
 
     def es_legal(self,percep) -> bool:
-
-        for i in range(len(percep[ClauPercepcio.PARETS])):
-            if ((self.__posicio[0] == percep[ClauPercepcio.PARETS][i][0]) 
-            and (self.__posicio[1] == percep[ClauPercepcio.PARETS][i][1])):
-                #print("fals")
+        for i in percep[ClauPercepcio.PARETS]:
+            if(self.__posicio[0]==i[0]and self.__posicio[1]==i[1]):
                 return False
-           
+
         for i in range(2):
-            if self.__posicio[i] >= percep[ClauPercepcio.MIDA_TAULELL][i]:
+            if self.__posicio[i] >= (percep[ClauPercepcio.MIDA_TAULELL][i]-1):
                 return False
             if self.__posicio[i] < 0:
                 return False
+        
         return True
 
     def calcular_heuristica(self, percep)->int:
@@ -92,7 +95,7 @@ class Estat:
             if i==Direccio.DALT:
                 y=y-1
             
-            nou_fill=Estat((x,y),self.__pes+1,(self,AccionsRana.MOURE,i))
+            nou_fill=Estat((x,y),self.__pes+1,(self,(AccionsRana.MOURE,i)))
             
             if nou_fill.es_legal(percep):
                 fills.append(nou_fill)    
