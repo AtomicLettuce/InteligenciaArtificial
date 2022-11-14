@@ -10,6 +10,7 @@ from practica1 import joc
 from estat import Estat
 from queue import PriorityQueue
 from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
+import time
 
 
 class Rana(joc.Rana):
@@ -25,17 +26,18 @@ class Rana(joc.Rana):
 
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
         estat_inicial=Estat(percep[ClauPercepcio.POSICIO]['Miquel'],0,None)
-        #estat_inicial.__init__(percep[ClauPercepcio.POSICIO]['Miquel'],0,None)
+        
         if self.__accions is None:
             self.cerca(estat_inicial, percep)
-            #print("asdf")
+
         
         if self.__accions:
             acc=self.__accions.pop()
-            print("pinga")
-            print(acc)
+            if(acc==AccionsRana.ESPERAR):
+                return acc
+            else:
+                return acc[0], acc[1]
         
-        return AccionsRana.ESPERAR
     
     def cerca(self, estat_inicial, percep):
         self.__oberts = PriorityQueue()
@@ -46,9 +48,11 @@ class Rana(joc.Rana):
 
         while  not self.__oberts.empty():
             _, actual=self.__oberts.get()
+
             if actual in self.__tancats:
                 continue
-            if actual.es_meta(percep):
+
+            if actual.es_meta(percep):                
                 break
 
             estats_fills=actual.genera_fills(percep)
@@ -58,16 +62,16 @@ class Rana(joc.Rana):
             
             self.__tancats.add(actual)
 
-            if actual.es_meta(percep):
-                accions=[]
-                iterador=actual
+        if actual.es_meta(percep):
+            accions=[]
+            iterador=actual
 
-                while iterador.pare is not None:
-                    pare, accio=iterador.pare
+            while iterador.pare is not None:
+                pare, accio=iterador.pare
 
-                    accions.append(accio)
-                    iterador=pare
-                
-                self.__accions=accions
+                accions.append(accio)
+                iterador=pare
+            
+            self.__accions=accions
 
 
