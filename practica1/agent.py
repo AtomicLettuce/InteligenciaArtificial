@@ -6,24 +6,68 @@ ClauPercepcio:
     PARETS = 2
 """
 from ia_2022 import entorn
-from practica1 import joc, agent_A_estrella
-from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
+from practica1 import joc
 from estat import Estat
+from queue import PriorityQueue
+from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
 
 
 class Rana(joc.Rana):
     
     def __init__(self, *args, **kwargs):
         super(Rana, self).__init__(*args, **kwargs)
+        self.__oberts=None
+        self.__tancats=None
+        self.__accions=None
 
     def pinta(self, display):
         pass
 
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
-
-        estat_inicial = Estat()
-        estat_inicial.init(percep[ClauPercepcio.POSICIO],0, pare=None)
-
-        estat_inicial.es_legal(percep)
+        estat_inicial=Estat(percep[ClauPercepcio.POSICIO]['Miquel'],0,None)
+        #estat_inicial.__init__(percep[ClauPercepcio.POSICIO]['Miquel'],0,None)
+        if self.__accions is None:
+            self.cerca(estat_inicial, percep)
+            #print("asdf")
+        
+        if self.__accions:
+            acc=self.__accions.pop()
+            print("pinga")
+            print(acc)
+        
         return AccionsRana.ESPERAR
+    
+    def cerca(self, estat_inicial, percep):
+        self.__oberts = PriorityQueue()
+        self.__tancats=set()
+        self.__oberts.put((estat_inicial.calcular_heuristica(percep), estat_inicial))
+
+        actual = None
+
+        while  not self.__oberts.empty():
+            _, actual=self.__oberts.get()
+            if actual in self.__tancats:
+                continue
+            if actual.es_meta(percep):
+                break
+
+            estats_fills=actual.genera_fills(percep)
+            
+            for fill in estats_fills:
+                self.__oberts.put((fill.calcular_heuristica(percep),fill))
+            
+            self.__tancats.add(actual)
+
+            if actual.es_meta(percep):
+                accions=[]
+                iterador=actual
+
+                while iterador.pare is not None:
+                    pare, accio=iterador.pare
+
+                    accions.append(accio)
+                    iterador=pare
+                
+                self.__accions=accions
+
 

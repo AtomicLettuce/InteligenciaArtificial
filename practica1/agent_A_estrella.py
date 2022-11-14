@@ -24,41 +24,41 @@ class Rana(joc.Rana):
         pass
 
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
-
-        estat_inicial=Estat()
-        estat_inicial.__init__(percep[ClauPercepcio.POSICIO]['Miquel'],0,None)
+        estat_inicial=Estat(percep[ClauPercepcio.POSICIO]['Miquel'],0,None)
+        #estat_inicial.__init__(percep[ClauPercepcio.POSICIO]['Miquel'],0,None)
         if self.__accions is None:
-            self.cerca(estat_inicial)
+            self.cerca(estat_inicial, percep)
+            #print("asdf")
         
         if self.__accions:
             acc=self.__accions.pop()
-        
-        return acc
+            print("pinga")
+            print(acc)
         
         return AccionsRana.ESPERAR
     
-    def cerca(self, estat_inicial):
+    def cerca(self, estat_inicial, percep):
         self.__oberts = PriorityQueue()
         self.__tancats=set()
-        self.oberts.put(estat_inicial.calcular_heuristica(), estat_inicial)
+        self.__oberts.put((estat_inicial.calcular_heuristica(percep), estat_inicial))
 
         actual = None
 
-        while  not self.obers.empty():
-            _, actual=self.oberts.get()
-            if actual in self.tancats:
+        while  not self.__oberts.empty():
+            _, actual=self.__oberts.get()
+            if actual in self.__tancats:
                 continue
-            if actual.es_meta():
+            if actual.es_meta(percep):
                 break
 
-            estats_fills=actual.genera_fills()
+            estats_fills=actual.genera_fills(percep)
             
             for fill in estats_fills:
-                self.__oberts.put((fill.calcular_heuristica(),fill))
+                self.__oberts.put((fill.calcular_heuristica(percep),fill))
             
             self.__tancats.add(actual)
 
-            if actual.es_meta():
+            if actual.es_meta(percep):
                 accions=[]
                 iterador=actual
 
