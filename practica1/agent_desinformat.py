@@ -7,10 +7,10 @@ ClauPercepcio:
 """
 from ia_2022 import entorn
 from practica1 import joc
-from estat import Estat
+from practica1.estat import Estat
 from queue import PriorityQueue
 from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
-from practica1.agent import Estat
+import time
 
 
 class RanaDesinformada(joc.Rana):   
@@ -20,6 +20,9 @@ class RanaDesinformada(joc.Rana):
         self.__oberts = None
         self.__tancats = None
         self.__accions = None
+    
+    def pinta(self, display):
+        pass
 
     def cerca(self, estat, percep):
         self.__oberts = []
@@ -52,22 +55,24 @@ class RanaDesinformada(joc.Rana):
             iterador = actual
 
             while iterador.pare is not None:
-                pare, accio = iterador.pare
+                pare, accio=iterador.pare
+
                 accions.append(accio)
-                iterador = pare
-            self.__accions = accions
+                iterador=pare
+            
+            self.__accions=accions
 
 
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
-        estat_inicial = Estat(percep[ClauPercepcio.POSICIO]['Miquel'],0, pare = None)
+        estat_inicial = Estat(percep[ClauPercepcio.POSICIO]['Xavier'],0, pare = None)
         if self.__accions is None:
             self.cerca( estat_inicial,percep)
+        if self.__accions:
+            if self.esta_botant():
+                return AccionsRana.ESPERAR
+            return self.__accions.pop()
+        return AccionsRana.ESPERAR
 
-            if self.__accions:
-                acc = self.__accions.pop()
-                if(acc == AccionsRana.ESPERAR):
-                    return acc
-                else:
-                    return acc[0], acc[1]
 
-            return AccionsRana.ESPERAR
+            
+        
