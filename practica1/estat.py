@@ -92,7 +92,7 @@ class Estat:
             if i==Direccio.DALT:
                 y=y-1
             
-            nou_fill=Estat((x,y),self.__pes+1,(self,AccionsRana.MOURE,i))
+            nou_fill=Estat((x,y),self.__pes+1,(self,(AccionsRana.MOURE,i)))
             
             if nou_fill.es_legal(percep):
                 fills.append(nou_fill)    
