@@ -26,17 +26,19 @@ class Rana(joc.Rana):
 
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
         estat_inicial=Estat(percep[ClauPercepcio.POSICIO]['Miquel'],0,None)
-        
+
+        if self.esta_botant():
+            return AccionsRana.ESPERAR
         if self.__accions is None:
             self.cerca(estat_inicial, percep)
+        print(self.__accions)
 
         
         if self.__accions:
             acc=self.__accions.pop()
-            if(acc==AccionsRana.ESPERAR):
-                return acc
-            else:
-                return acc[0], acc[1]
+            return acc
+        print("no més accions")
+        return AccionsRana.ESPERAR
         
     
     def cerca(self, estat_inicial, percep):
