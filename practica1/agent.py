@@ -10,7 +10,6 @@ from practica1 import joc
 from estat import Estat
 from queue import PriorityQueue
 from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
-import time
 
 
 class Rana(joc.Rana):
@@ -31,13 +30,11 @@ class Rana(joc.Rana):
             return AccionsRana.ESPERAR
         if self.__accions is None:
             self.cerca(estat_inicial, percep)
-        print(self.__accions)
 
         
         if self.__accions:
             acc=self.__accions.pop()
             return acc
-        print("no més accions")
         return AccionsRana.ESPERAR
         
     

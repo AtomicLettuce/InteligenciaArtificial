@@ -10,13 +10,12 @@ from practica1 import joc
 from estat import Estat
 from queue import PriorityQueue
 from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
-import time
 
 
-class Rana(joc.Rana):
+class Rana_A_Estrella(joc.Rana):
     
     def __init__(self, *args, **kwargs):
-        super(Rana, self).__init__(*args, **kwargs)
+        super(Rana_A_Estrella, self).__init__(*args, **kwargs)
         self.__oberts=None
         self.__tancats=None
         self.__accions=None
@@ -26,20 +25,16 @@ class Rana(joc.Rana):
 
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
         estat_inicial=Estat(percep[ClauPercepcio.POSICIO]['Xavier'],0,None)
-        
 
+        if self.esta_botant():
+            return AccionsRana.ESPERAR
         if self.__accions is None:
             self.cerca(estat_inicial, percep)
 
         
         if self.__accions:
-            if self.esta_botant():
-                return AccionsRana.ESPERAR
             acc=self.__accions.pop()
-            if(acc==AccionsRana.ESPERAR):
-                return acc
-            else:
-                return acc[0], acc[1]
+            return acc
         return AccionsRana.ESPERAR
         
         
