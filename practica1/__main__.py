@@ -12,7 +12,7 @@ from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
 
 
 def main():
-    rana = agent_desinformat.RanaDesinformada("Xavier")
+    rana = agent_desinformat.RanaDesinformada('Xavier')
     lab = joc.Laberint([rana], parets=True)
     lab.comencar()
 

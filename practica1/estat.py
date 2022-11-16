@@ -115,7 +115,7 @@ class Estat:
                 fills.append(nou_fill)  
 
         # Fill ACCIÓ ESPERAR
-        nou_fill=Estat((x,y),self.__pes+0.5,(self,(AccionsRana.ESPERAR)))
+        #nou_fill=Estat((x,y),self.__pes+0.5,(self,(AccionsRana.ESPERAR)))
         fills.append(nou_fill)
 
         return fills
