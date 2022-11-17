@@ -9,16 +9,36 @@ class RanaGenetica(joc.Rana):
 
     def __init__(self, *args, **kwargs):
         super(RanaGenetica, self).__init__(*args, **kwargs)
-        self.__oberts = None
-        self.__tancats = None
-        self.__accions = None
+        self.__accions=None
     
     def pinta(self, display):
         pass
 
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
-    
+        
+        if self.esta_botant():
+            return AccionsRana.ESPERAR
+        if self.__accions is None:
+            self.genera_individus(percep)
+
+        if self.__accions:
+            acc=self.__accions.pop()
+            return acc
+
         return AccionsRana.ESPERAR
+
+    def genera_individus(self, percep):
+        self.__accions=[]
+
+        individus = []
+
+        # Generam una població
+        for i in range(100):
+            individu=Individu(percep[ClauPercepcio.POSICIO],None)
+            individus.append(individu)
+    
+
+
 
 class Individu:
     # Totes les accions que se poden fer
@@ -97,27 +117,54 @@ class Individu:
         nova_acc=randint(0,len(self.acc_pos))
         self.__accions[idx]=nova_acc
 
+    def es_meta(self, percep):
+        pass
     
-    def offspring(self, other, qt:int):
+    def offspring(self, other, qt:int, percep) -> tuple:
         fills=[]
 
         for i in range(qt):
             pare_dominant=choice([True,False])
+            fill = Individu(percep[ClauPercepcio.POSICIO],None)
+
             # Seleccionar 'a' primers moviments de pare (self) + 'b' darrers moviments de mare (other)
             if pare_dominant:
                 a=randint(1,len(self.__accions))
                 b=randint(1,other.accions)
+                b=len(other.accions)-b
                 
-                fill = #Individu(ClauPercepcio.POSICIO,None)
-                pass
+                # fica ses 'a' primeres accions del pare
+                for j in range(a):
+                    fill.accions.append(self.__accions[j])
+                # fice ses 'b' darreres accions de la mare
+                for b in range(len(other.accions)):
+                    if fill.es_legal(other.accions[b]):
+                        fill.accions.append(other.accions[b])
+                        # Si ja ha arribat a la pizza, deixa de ficar accions
+                        if fill.es_meta(percep):
+                            break
+
             # Seleccionar 'a' primers moviments de pare (other) + 'b' darrers moviments de mare (self)
             else:
-                pass
-
-            pass
-        # Seleccionar 'a' primers moviments de pare (self) + 'b' darrers moviments de mare (other)
-
-
-
-
+                a=randint(1,len(self.__accions))
+                b=randint(1,other.accions)
+                b=len(other.accions)-b
+                
+                fill = Individu(ClauPercepcio.POSICIO,None)
+                # fica ses 'a' primeres accions del pare
+                for j in range(a):
+                    fill.accions.append(other.accions[j])
+                # fice ses 'b' darreres accions de la mare
+                for b in range(len(self.__accions)):
+                    if fill.es_legal(self.__accions[b]):
+                        fill.accions.append(self.__accions[b])
+                        # Si ja ha arribat a la pizza, deixa de ficar accions
+                        if fill.es_meta():
+                            break
+            
+            # 1% de probabilitats de tenir una mutació
+            prob_mutar=randint(0,100)
+            if prob_mutar<=1:
+                fill.muta(percep)
+            fills.append(fill)
         return fills
