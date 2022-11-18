@@ -12,38 +12,53 @@ class agent_minomax(joc.Rana):
     def pinta(self, display):
         pass
 
-    def minimax(self,Estat,torn_de_max,percep):
-        profunditat = 5
+    def minimax(self,Estat,torn_de_max,percep,maxx, minn):
+        profunditat = 2
         if torn_de_max == profunditat:
-            return self.evaluar(percep)
-        print(max)
-        print(max.__name__)
+            return self.evaluar(percep,maxx,minn)
+
         #agafar es fill que tengui sa maxima o sa minima
         if torn_de_max % 2 == 0:
-            puntuacio_fills = [self.minimax(estat_fill,torn_de_max+1) for estat_fill in Estat.genera_fills_minimax(percep,max.__name__,min.__name__)]
-            return max(puntuacio_fills)
+
+            estats_fill = Estat.genera_fills_minimax(percep,maxx,minn)
+            punmax = -999
+            for i in range(len(estats_fill)):
+                puntuacio = self.minimax(estats_fill[i],torn_de_max+1,percep,maxx, minn) 
+                if puntuacio > punmax:
+                    print(puntuacio)
+                    tornada = puntuacio,estats_fill[i]
+            print(tornada)
+            return tornada
         else:
-            puntuacio_fills = [self.minimax(estat_fill,torn_de_max+1) for estat_fill in Estat.genera_fills_minimax(percep,min.__name__,max.__name__)]
+            puntuacio_fills = [self.minimax(estat_fill,torn_de_max+1,percep,maxx,minn) for estat_fill in Estat.genera_fills_minimax(percep,minn,maxx)]
             return min(puntuacio_fills)
         
 
-    def evaluar(self,percep):
+    def evaluar(self,percep,max,min):
         
-        return Estat.calcular_distanciaManhatan(min.__name__,percep)-Estat.calcular_distanciaManhatan(max.__name__,percep)
+        return Estat.calcular_distanciaManhatan(self,min,percep)-Estat.calcular_distanciaManhatan(self,max,percep)
 
     
-    def cerca(self, estat, percep):
-        self.minimax(estat,0,percep)
+    def cerca(self, estat, percep,max,min):
+        _,actual = self.minimax(estat,0,percep,max,min)
+        print("pare",actual.pare)
+        pare, accio = actual.pare
+        print(accio)
+        return accio
 
     #fer que no comenci cada vegada per s'estat inicial
     #nomes hi ha una accio cada vegada
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
         print(percep[ClauPercepcio.POSICIO])
-        estat_inicial = Estat(percep[ClauPercepcio.POSICIO],None)
-        
-        self.cerca( estat_inicial,percep)
+        estat_inicial = Estat(percep[ClauPercepcio.POSICIO]["Xavier"],percep[ClauPercepcio.POSICIO]["Lluis"],None)
+        print("actual",self.__estatActual)
+        if None == self.__estatActual:
+            self.__estatActual = estat_inicial
+            return self.cerca(estat_inicial,percep,0,1)
+        else:
+            return self.cerca(self.__estatActual,percep,0,1)
 
-        return AccionsRana.ESPERAR
+       
 
 
 
@@ -61,9 +76,10 @@ percep[ClauPercepio.OLOR][0]
 """
 class Estat:
 
-    def __init__(self, posicio:tuple,  pare=None):
+    def __init__(self, posicio:tuple,posiciomin:tuple,  pare=None):
         #posició es una tupla amb els agents i les seves posicions
         self.__posicio=posicio
+        self.__posiciomin = posiciomin
         #pare és un estat i sa acció que l'ha generat
         self.__pare=pare
 
@@ -86,23 +102,23 @@ class Estat:
         self.__posicio[key] = value
 
     def es_legal(self,percep,max,min) -> bool:
-            for i in range(len(percep[ClauPercepcio.PARETS])):
-                if ((self.__posicio[max][0] == percep[ClauPercepcio.PARETS][i][0]) 
-                and (self.__posicio[max][1] == percep[ClauPercepcio.PARETS][i][1])):
+        
+        for i in range(len(percep[ClauPercepcio.PARETS])):
+                if ((self.__posicio[0] == percep[ClauPercepcio.PARETS][i][0]) 
+                and (self.__posicio[1] == percep[ClauPercepcio.PARETS][i][1])):
                     #print("fals")
                     return False
            
-            for i in range(2):
-                if self.__posicio[max][i] >= percep[ClauPercepcio.MIDA_TAULELL][i]:
-                    return False
-                if self.__posicio[max][i] < 0:
-                    return False
+        for i in range(2):
+            if self.__posicio[i] >= percep[ClauPercepcio.MIDA_TAULELL][i]:
+                return False
+            if self.__posicio[i] < 0:
+                return False
+
+           
+        return True 
 
 
-            if (self.__posicio[max][0] == self.__posicio[min][0]
-            and self.__posicio[max][1] == self.__posicio[min][1]):
-                return False            
-            return True 
 
     def calcular_heuristica(self, percep)->int:
         pos_pizza=percep[ClauPercepcio.OLOR]
@@ -110,10 +126,10 @@ class Estat:
         sum=abs(pos_pizza[0]-self.__posicio[0])+abs(pos_pizza[1]-self.__posicio[1])
         return sum+self.__pes
 
-    def calcular_distanciaManhatan(self, max, percep )->int:
+    def calcular_distanciaManhatan(self, max,percep)->int:
         pos_pizza=percep[ClauPercepcio.OLOR]
         sum=0
-        sum=abs(pos_pizza[0]-self.__posicio[max][0])+abs(pos_pizza[1]-self.__posicio[max][1])
+        sum=abs(pos_pizza[0]-self.__posicio[0])+abs(pos_pizza[1]-self.__posicio[1])
         return sum
 
         
@@ -125,6 +141,9 @@ class Estat:
     @property
     def posicio(self):
         return self.__posicio
+    @property
+    def posiciomin(self):
+        return self.__posiciomin
 
     @pare.setter
     def pare(self, value):
@@ -135,11 +154,10 @@ class Estat:
     def genera_fills_minimax(self, percep, max,min):
 
         fills=[]
-        
+
         # Fills ACCIÓ MOURE
         for i in Direccio:
-            print(max)
-            x,y = self.__posicio[max]
+            x,y= self.__posicio
             if i==Direccio.DRETA:
                 x=x+1
             if i==Direccio.ESQUERRE:
@@ -156,7 +174,7 @@ class Estat:
 
         # Fills ACCIÓ BOTAR
         for i in Direccio:
-            x,y = self.__posicio[max]
+            x,y = self.__posicio
             if i==Direccio.DRETA:
                 x=x+2
             if i==Direccio.ESQUERRE:
