@@ -41,8 +41,7 @@ class Estat:
     def __setitem__(self, key, value):
         self.__posicio[key] = value
 
-    def es_legal(self,percep,max,min) -> bool:
-        if not max:
+    def es_legal(self,percep) -> bool:
 
             for i in range(len(percep[ClauPercepcio.PARETS])):
                 if ((self.__posicio[0] == percep[ClauPercepcio.PARETS][i][0]) 
@@ -57,24 +56,7 @@ class Estat:
                     return False
             return True
             
-        else:
-            for i in range(len(percep[ClauPercepcio.PARETS])):
-                if ((self.__posicio[max][0] == percep[ClauPercepcio.PARETS][i][0]) 
-                and (self.__posicio[max][1] == percep[ClauPercepcio.PARETS][i][1])):
-                    #print("fals")
-                    return False
-           
-            for i in range(2):
-                if self.__posicio[max][i] >= percep[ClauPercepcio.MIDA_TAULELL][i]:
-                    return False
-                if self.__posicio[max][i] < 0:
-                    return False
 
-
-            if (self.__posicio[max][0] == self.__posicio[min][0]
-            and self.__posicio[max][1] == self.__posicio[min][1]):
-                return False            
-            return True 
 
     def calcular_heuristica(self, percep)->int:
         pos_pizza=percep[ClauPercepcio.OLOR]
@@ -82,11 +64,7 @@ class Estat:
         sum=abs(pos_pizza[0]-self.__posicio[0])+abs(pos_pizza[1]-self.__posicio[1])
         return sum+self.__pes
 
-    def calcular_distanciaManhatan(self, max, percep )->int:
-        pos_pizza=percep[ClauPercepcio.OLOR]
-        sum=0
-        sum=abs(pos_pizza[0]-self.__posicio[max][0])+abs(pos_pizza[1]-self.__posicio[max][1])
-        return sum
+
 
         
     # Un pare és un Estat amb una acció
@@ -146,48 +124,4 @@ class Estat:
 
         return fills
 
-    def genera_fills_minimax(self, percep, nom,min):
-
-        fills=[]
-        
-        # Fills ACCIÓ MOURE
-        for i in Direccio:
-            x,y = self.__posicio[nom]
-            if i==Direccio.DRETA:
-                x=x+1
-            if i==Direccio.ESQUERRE:
-                x=x-1
-            if i==Direccio.BAIX:
-                y=y+1
-            if i==Direccio.DALT:
-                y=y-1
-            
-            nou_fill=Estat((x,y),self.__pes+1,(self,(AccionsRana.MOURE,i)))
-            
-            if nou_fill.es_legal(percep,nom,min):
-                fills.append(nou_fill)    
-
-        # Fills ACCIÓ BOTAR
-        for i in Direccio:
-            x,y = self.__posicio[nom]
-            if i==Direccio.DRETA:
-                x=x+2
-            if i==Direccio.ESQUERRE:
-                x=x-2
-            if i==Direccio.BAIX:
-                y=y+2
-            if i==Direccio.DALT:
-                y=y-2
-            
-            nou_fill=Estat((x,y),self.__pes+6,(self,(AccionsRana.BOTAR,i)))
-            
-            if nou_fill.es_legal(percep,nom,min):
-                fills.append(nou_fill)  
-
-        # Fill ACCIÓ ESPERAR
-        #nou_fill=Estat((x,y),self.__pes+0.5,(self,(AccionsRana.ESPERAR)))
-        fills.append(nou_fill)
-
-        return fills
-
-
+   
