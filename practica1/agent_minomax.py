@@ -31,7 +31,17 @@ class agent_minomax(min = joc.Rana, max = joc.Rana):
     
     def cerca(self, estat, percep):
         minimax(estat,0,percep)
-        
-        
+
+    #fer que no comenci cada vegada per s'estat inicial
+    #nomes hi ha una accio cada vegada
+    def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
+        estat_inicial = Estat(percep[ClauPercepcio.POSICIO],0, pare = None)
+        if self.__accions is None:
+            self.cerca( estat_inicial,percep)
+        if self.__accions:
+            if self.esta_botant():
+                return AccionsRana.ESPERAR
+            return self.__accions.pop()
+        return AccionsRana.ESPERAR
 
 
