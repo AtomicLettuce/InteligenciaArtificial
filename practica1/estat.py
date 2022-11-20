@@ -98,7 +98,7 @@ class Estat:
             
             nou_fill=Estat((x,y),self.__pes+1,(self,(AccionsRana.MOURE,i)))
             
-            if nou_fill.es_legal(percep,"", ""):
+            if nou_fill.es_legal(percep):
                 fills.append(nou_fill)    
 
         # Fills ACCIÓ BOTAR
@@ -115,7 +115,7 @@ class Estat:
             
             nou_fill=Estat((x,y),self.__pes+6,(self,(AccionsRana.BOTAR,i)))
             
-            if nou_fill.es_legal(percep,"",""):
+            if nou_fill.es_legal(percep):
                 fills.append(nou_fill)  
 
         # Fill ACCIÓ ESPERAR

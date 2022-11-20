@@ -12,51 +12,58 @@ class agent_minomax(joc.Rana):
     def pinta(self, display):
         pass
 
-    def minimax(self,Estat,torn_de_max,percep,maxx, minn):
+    def minimax(self,Estat,torn_de_max,):
         profunditat = 2
         if torn_de_max == profunditat:
-            return self.evaluar(percep,maxx,minn)
+            return self.evaluar(Estat),Estat
 
         #agafar es fill que tengui sa maxima o sa minima
         if torn_de_max % 2 == 0:
 
-            estats_fill = Estat.genera_fills_minimax(percep,maxx,minn)
-            punmax = -999
+            estats_fill = Estat.genera_fills_minimax()
+            punmax = -999,None
             for i in range(len(estats_fill)):
-                puntuacio = self.minimax(estats_fill[i],torn_de_max+1,percep,maxx, minn) 
-                if puntuacio > punmax:
-                    print(puntuacio)
-                    tornada = puntuacio,estats_fill[i]
-            print(tornada)
-            return tornada
+                puntuacio = self.minimax(estats_fill[i],torn_de_max+1) 
+                if puntuacio[0] > punmax[0]:
+                    punmax = puntuacio
+
+            return punmax
         else:
-            puntuacio_fills = [self.minimax(estat_fill,torn_de_max+1,percep,maxx,minn) for estat_fill in Estat.genera_fills_minimax(percep,minn,maxx)]
-            return min(puntuacio_fills)
+            estats_fill = Estat.genera_fills_minimax()
+            punmin = -999,None
+            for i in range(len(estats_fill)):
+                puntuacio = self.minimax(estats_fill[i],torn_de_max+1) 
+                if puntuacio[0] > punmin[0]:
+                    
+                    punmin= puntuacio
+            return punmin
         
-
-    def evaluar(self,percep,max,min):
-        
-        return Estat.calcular_distanciaManhatan(self,min,percep)-Estat.calcular_distanciaManhatan(self,max,percep)
-
     
-    def cerca(self, estat, percep,max,min):
-        _,actual = self.minimax(estat,0,percep,max,min)
-        print("pare",actual.pare)
-        pare, accio = actual.pare
-        print(accio)
-        return accio
+    def evaluar(self,estat):
+        
+        return Estat.calcular_distanciaManhatan(estat)
+
+    def pinta(self,display):
+        pass
+    
+    def cerca(self, estat):
+        _,actual = self.minimax(estat,0)
+        _, accio = actual.pare
+        return actual
 
     #fer que no comenci cada vegada per s'estat inicial
     #nomes hi ha una accio cada vegada
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
-        print(percep[ClauPercepcio.POSICIO])
-        estat_inicial = Estat(percep[ClauPercepcio.POSICIO]["Xavier"],percep[ClauPercepcio.POSICIO]["Lluis"],None)
-        print("actual",self.__estatActual)
-        if None == self.__estatActual:
-            self.__estatActual = estat_inicial
-            return self.cerca(estat_inicial,percep,0,1)
-        else:
-            return self.cerca(self.__estatActual,percep,0,1)
+        noms = list(percep[ClauPercepcio.POSICIO].keys())
+        noms.remove(self.nom)
+        estat_inicial = Estat(percep.to_dict(),percep[ClauPercepcio.POSICIO][self.nom],None,nomMax = self.nom,nomMin = noms[0])
+
+
+        estat =  self.cerca(estat_inicial)
+
+        _,accio = estat.pare
+        return accio
+
 
        
 
@@ -76,18 +83,17 @@ percep[ClauPercepio.OLOR][0]
 """
 class Estat:
 
-    def __init__(self, posicio:tuple,posiciomin:tuple,  pare=None):
+    def __init__(self,percep,pos, pare,nomMax,nomMin):
         #posició es una tupla amb els agents i les seves posicions
-        self.__posicio=posicio
-        self.__posiciomin = posiciomin
+        self.percep = percep
+        self.nomMax = nomMax
+        self.nomMin = nomMin
+        self.__posicio = pos
         #pare és un estat i sa acció que l'ha generat
         self.__pare=pare
 
-    def eq(self, other) -> bool:
-        return self.__posicio[0] ==other.__posicio[0] & self.__posicio[1]==other.__posicio[1]
-
     def es_meta(self,percep) -> bool:
-        return (percep[ClauPercepcio.OLOR][0]==self.__posicio[0]) and (percep[ClauPercepcio.OLOR][1]==self.__posicio[1])
+        return (percep[ClauPercepcio.OLOR][0]==self.posicio[0]) and (percep[ClauPercepcio.OLOR][1]==self.posicio[1])
 
     def hash(self):
         return hash(tuple(self.__posicio))
@@ -95,42 +101,44 @@ class Estat:
     def __lt__(self, other):
         return False
 
+    @property
+    def posicio(self):
+        return self.__posicio
     def __getitem__(self,key):
-        return self.__posicio[key]
+        return self.percep[key]
 
     def __setitem__(self, key, value):
-        self.__posicio[key] = value
+        self.percep[key] = value
 
-    def es_legal(self,percep,max,min) -> bool:
+    def es_legal(self) -> bool:
         
-        for i in range(len(percep[ClauPercepcio.PARETS])):
-                if ((self.__posicio[0] == percep[ClauPercepcio.PARETS][i][0]) 
-                and (self.__posicio[1] == percep[ClauPercepcio.PARETS][i][1])):
+        for i in range(len(self.percep[ClauPercepcio.PARETS])):
+                if ((self.posicio[0] == self.percep[ClauPercepcio.PARETS][i][0]) 
+                and (self.posicio[1] == self.percep[ClauPercepcio.PARETS][i][1])):
                     #print("fals")
                     return False
            
         for i in range(2):
-            if self.__posicio[i] >= percep[ClauPercepcio.MIDA_TAULELL][i]:
+            if self.posicio[i] >= self.percep[ClauPercepcio.MIDA_TAULELL][i]:
                 return False
-            if self.__posicio[i] < 0:
+            if self.posicio[i] < 0:
                 return False
 
-           
+        if(self.posicio[0] == self.percep[ClauPercepcio.POSICIO][self.nomMin][0] and 
+        self.posicio[1] == self.percep[ClauPercepcio.POSICIO][self.nomMin][1]):
+            return False  
         return True 
 
 
 
-    def calcular_heuristica(self, percep)->int:
-        pos_pizza=percep[ClauPercepcio.OLOR]
-        sum=0
-        sum=abs(pos_pizza[0]-self.__posicio[0])+abs(pos_pizza[1]-self.__posicio[1])
-        return sum+self.__pes
 
-    def calcular_distanciaManhatan(self, max,percep)->int:
-        pos_pizza=percep[ClauPercepcio.OLOR]
+    def calcular_distanciaManhatan(self)->int:
+        pos_pizza=self.percep[ClauPercepcio.OLOR]
         sum=0
-        sum=abs(pos_pizza[0]-self.__posicio[0])+abs(pos_pizza[1]-self.__posicio[1])
-        return sum
+        sum=abs(pos_pizza[0]-self.posicio[0])+abs(pos_pizza[1]-self.posicio[1])
+        res=0
+        res=abs(pos_pizza[0]-self.percep[ClauPercepcio.POSICIO][self.nomMin][0])+abs(pos_pizza[1]-self.percep[ClauPercepcio.POSICIO][self.nomMin][1])
+        return res-sum
 
         
     # Un pare és un Estat amb una acció
@@ -138,12 +146,7 @@ class Estat:
     def pare(self):
         return self.__pare
 
-    @property
-    def posicio(self):
-        return self.__posicio
-    @property
-    def posiciomin(self):
-        return self.__posiciomin
+
 
     @pare.setter
     def pare(self, value):
@@ -151,13 +154,12 @@ class Estat:
 
 
 
-    def genera_fills_minimax(self, percep, max,min):
+    def genera_fills_minimax(self):
 
         fills=[]
-
         # Fills ACCIÓ MOURE
         for i in Direccio:
-            x,y= self.__posicio
+            x,y= self.posicio
             if i==Direccio.DRETA:
                 x=x+1
             if i==Direccio.ESQUERRE:
@@ -167,14 +169,15 @@ class Estat:
             if i==Direccio.DALT:
                 y=y-1
             
-            nou_fill=Estat((x,y),(self,(AccionsRana.MOURE,i)))
+
+            nou_fill=Estat(self.percep, (x,y), (self,(AccionsRana.MOURE,i)),self.nomMin,self.nomMax)
             
-            if nou_fill.es_legal(percep,max,min):
+            if nou_fill.es_legal():
                 fills.append(nou_fill)    
 
         # Fills ACCIÓ BOTAR
         for i in Direccio:
-            x,y = self.__posicio
+            x,y = self.posicio
             if i==Direccio.DRETA:
                 x=x+2
             if i==Direccio.ESQUERRE:
@@ -184,13 +187,14 @@ class Estat:
             if i==Direccio.DALT:
                 y=y-2
             
-            nou_fill=Estat((x,y),(self,(AccionsRana.BOTAR,i)))
-            
-            if nou_fill.es_legal(percep,max,min):
+
+            nou_fill=Estat(self.percep,(x,y),(self,(AccionsRana.MOURE,i)),self.nomMin,self.nomMax)
+          
+            if nou_fill.es_legal():
                 fills.append(nou_fill)  
 
         # Fill ACCIÓ ESPERAR
-        #nou_fill=Estat((x,y),self.__pes+0.5,(self,(AccionsRana.ESPERAR)))
+        nou_fill=Estat(self.percep,self.posicio,(self,(AccionsRana.ESPERAR)),self.nomMin,self.nomMax)
         fills.append(nou_fill)
 
         return fills
