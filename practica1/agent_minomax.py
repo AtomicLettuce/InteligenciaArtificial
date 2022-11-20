@@ -13,7 +13,7 @@ class agent_minomax(joc.Rana):
         pass
 
     def minimax(self,Estat,torn_de_max,):
-        profunditat = 2
+        profunditat = 4
         if torn_de_max == profunditat:
             return self.evaluar(Estat),Estat
 
@@ -24,7 +24,7 @@ class agent_minomax(joc.Rana):
             punmax = -999,None
             for i in range(len(estats_fill)):
                 puntuacio = self.minimax(estats_fill[i],torn_de_max+1) 
-                if puntuacio[0] > punmax[0]:
+                if puntuacio[0] >= punmax[0]:
                     punmax = puntuacio
 
             return punmax
@@ -33,7 +33,7 @@ class agent_minomax(joc.Rana):
             punmin = -999,None
             for i in range(len(estats_fill)):
                 puntuacio = self.minimax(estats_fill[i],torn_de_max+1) 
-                if puntuacio[0] > punmin[0]:
+                if puntuacio[0] >= punmin[0]:
                     
                     punmin= puntuacio
             return punmin
@@ -49,7 +49,7 @@ class agent_minomax(joc.Rana):
     def cerca(self, estat):
         _,actual = self.minimax(estat,0)
         _, accio = actual.pare
-        return actual
+        return accio
 
     #fer que no comenci cada vegada per s'estat inicial
     #nomes hi ha una accio cada vegada
@@ -59,9 +59,8 @@ class agent_minomax(joc.Rana):
         estat_inicial = Estat(percep.to_dict(),percep[ClauPercepcio.POSICIO][self.nom],None,nomMax = self.nom,nomMin = noms[0])
 
 
-        estat =  self.cerca(estat_inicial)
-
-        _,accio = estat.pare
+        accio =  self.cerca(estat_inicial)
+        #input()
         return accio
 
 
@@ -96,7 +95,7 @@ class Estat:
         return (percep[ClauPercepcio.OLOR][0]==self.posicio[0]) and (percep[ClauPercepcio.OLOR][1]==self.posicio[1])
 
     def hash(self):
-        return hash(tuple(self.__posicio))
+        return hash(tuple(self.posicio))
 
     def __lt__(self, other):
         return False
@@ -104,28 +103,33 @@ class Estat:
     @property
     def posicio(self):
         return self.__posicio
+
     def __getitem__(self,key):
-        return self.percep[key]
+        return self.posicio[key]
 
     def __setitem__(self, key, value):
-        self.percep[key] = value
+        self.posicio[key] = value
 
-    def es_legal(self) -> bool:
+    def es_legal(self,x,y) -> bool:
         
         for i in range(len(self.percep[ClauPercepcio.PARETS])):
-                if ((self.posicio[0] == self.percep[ClauPercepcio.PARETS][i][0]) 
-                and (self.posicio[1] == self.percep[ClauPercepcio.PARETS][i][1])):
+                if ((x == self.percep[ClauPercepcio.PARETS][i][0]) 
+                and (y == self.percep[ClauPercepcio.PARETS][i][1])):
                     #print("fals")
                     return False
            
-        for i in range(2):
-            if self.posicio[i] >= self.percep[ClauPercepcio.MIDA_TAULELL][i]:
-                return False
-            if self.posicio[i] < 0:
-                return False
+        
+        if x >= self.percep[ClauPercepcio.MIDA_TAULELL][0]:
+            return False
+        if x < 0:
+            return False
+        if y >= self.percep[ClauPercepcio.MIDA_TAULELL][1]:
+            return False
+        if y < 0:
+            return False
 
-        if(self.posicio[0] == self.percep[ClauPercepcio.POSICIO][self.nomMin][0] and 
-        self.posicio[1] == self.percep[ClauPercepcio.POSICIO][self.nomMin][1]):
+        if(x == self.percep[ClauPercepcio.POSICIO][self.nomMin][0] and 
+        y == self.percep[ClauPercepcio.POSICIO][self.nomMin][1]):
             return False  
         return True 
 
@@ -170,9 +174,9 @@ class Estat:
                 y=y-1
             
 
-            nou_fill=Estat(self.percep, (x,y), (self,(AccionsRana.MOURE,i)),self.nomMin,self.nomMax)
+            nou_fill=Estat(self.percep, (x,y), (self,(AccionsRana.MOURE,i)),self.nomMax,self.nomMin)
             
-            if nou_fill.es_legal():
+            if nou_fill.es_legal(x,y):
                 fills.append(nou_fill)    
 
         # Fills ACCIÓ BOTAR
@@ -188,13 +192,13 @@ class Estat:
                 y=y-2
             
 
-            nou_fill=Estat(self.percep,(x,y),(self,(AccionsRana.MOURE,i)),self.nomMin,self.nomMax)
+            nou_fill=Estat(self.percep,(x,y),(self,(AccionsRana.MOURE,i)),self.nomMax,self.nomMin)
           
-            if nou_fill.es_legal():
+            if nou_fill.es_legal(x,y):
                 fills.append(nou_fill)  
 
         # Fill ACCIÓ ESPERAR
-        nou_fill=Estat(self.percep,self.posicio,(self,(AccionsRana.ESPERAR)),self.nomMin,self.nomMax)
+        nou_fill=Estat(self.percep,self.posicio,(self,(AccionsRana.ESPERAR)),self.nomMax,self.nomMin)
         fills.append(nou_fill)
 
         return fills
