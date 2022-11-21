@@ -43,18 +43,20 @@ class Estat:
 
     def es_legal(self,percep) -> bool:
 
-        for i in range(len(percep[ClauPercepcio.PARETS])):
-            if ((self.__posicio[0] == percep[ClauPercepcio.PARETS][i][0]) 
-            and (self.__posicio[1] == percep[ClauPercepcio.PARETS][i][1])):
-                #print("fals")
-                return False
+            for i in range(len(percep[ClauPercepcio.PARETS])):
+                if ((self.__posicio[0] == percep[ClauPercepcio.PARETS][i][0]) 
+                and (self.__posicio[1] == percep[ClauPercepcio.PARETS][i][1])):
+                    #print("fals")
+                    return False
            
-        for i in range(2):
-            if self.__posicio[i] >= percep[ClauPercepcio.MIDA_TAULELL][i]:
-                return False
-            if self.__posicio[i] < 0:
-                return False
-        return True
+            for i in range(2):
+                if self.__posicio[i] >= percep[ClauPercepcio.MIDA_TAULELL][i]:
+                    return False
+                if self.__posicio[i] < 0:
+                    return False
+            return True
+            
+
 
     def calcular_heuristica(self, percep)->int:
         pos_pizza=percep[ClauPercepcio.OLOR]
@@ -63,6 +65,8 @@ class Estat:
         return sum+self.__pes
 
 
+
+        
     # Un pare és un Estat amb una acció
     @property
     def pare(self):
@@ -120,3 +124,4 @@ class Estat:
 
         return fills
 
+   
