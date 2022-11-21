@@ -10,7 +10,6 @@ from practica1 import joc
 from practica1.estat import Estat
 from queue import PriorityQueue
 from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
-import time
 
 
 class RanaDesinformada(joc.Rana):   
@@ -73,6 +72,7 @@ class RanaDesinformada(joc.Rana):
             if self.esta_botant():
                 return AccionsRana.ESPERAR
             return self.__accions.pop()
+        
         return AccionsRana.ESPERAR
 
 
