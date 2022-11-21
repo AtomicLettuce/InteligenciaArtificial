@@ -25,6 +25,7 @@ class RanaGenetica(joc.Rana):
             print(self.__accions)
             acc=self.__accions.pop()
             return acc
+        # Perquè no se peti quan acaba
         return AccionsRana.ESPERAR
 
     def genera_individus(self, percep):
@@ -45,6 +46,7 @@ class RanaGenetica(joc.Rana):
             top_10=[]
             for i in range (10):
                 _, ind=coa_individus.get()
+                # Si ja tenim una solució, deixa de cercar
                 if ind.ha_arribat(percep) and ind.es_legal_sempre(percep):
                     self.__accions=ind.accions
                     break
@@ -78,6 +80,7 @@ class Individu:
         self.__accions=accions
         self.__pos_inicial=pos_inicial
         self.__pos_final=pos_inicial
+        # Per prevenir errors
         if accions is None:
             self.__accions=[]
     
@@ -91,7 +94,7 @@ class Individu:
         return "pos_inicial: "+str(self.__pos_inicial)+" accions: "+str(self.__accions)
 
 
-    # Comprova si el recorregut que fa una Rana és sempre legal
+    # Comprova si el recorregut que fa una Rana és sempre legal (útil per comprovar si un fill que ha mutat segueix sent legal i per actualitzar la seva posició final)
     def es_legal_sempre(self, percep):
         accions=self.__accions.copy()
         self.__pos_final=self.__pos_inicial
@@ -108,7 +111,7 @@ class Individu:
     def es_legal(self,accio, percep):
         if accio==AccionsRana.ESPERAR:
             return True
-        if AccionsRana.MOURE in accio:
+        if accio[0]==AccionsRana.MOURE:
             if accio[1]==Direccio.DRETA:
                 if self.__pos_final[0]+1>percep[ClauPercepcio.MIDA_TAULELL][0] or (self.__pos_final[0]+1,self.__pos_final[1]) in percep[ClauPercepcio.PARETS]:
                     return False
@@ -150,7 +153,7 @@ class Individu:
     def accions(self):
         return self.__accions
 
-    # indica quants de moviments vol generar per aquest individu
+    # qt indica quants de moviments vol generar per aquest individu
     def genera_moviments(self, qt:int, percep):
         self.__accions=[]
 
@@ -179,9 +182,6 @@ class Individu:
 
         return fitness
 
-    def afegeix_accio(self, a):
-        self.__accions.insert(0,a)
-
     def muta(self, percep):
         # sel·lecciona un moviment aleatori 
         idx = randint(0,len(self.__accions)-1)
@@ -190,7 +190,7 @@ class Individu:
         nova_acc=randint(0,len(self.acc_pos)-1)
         self.__accions[idx]=nova_acc
 
-    
+    # Genera fills entre dos individus i retorna la seva descendènica
     def offspring(self, other, qt:int, percep) -> tuple:
         fills=[]
 
@@ -207,11 +207,11 @@ class Individu:
                 # fica ses 'a' primeres accions del pare
                 for j in range(a):
                     if fill.es_legal(a, percep):
-                        fill.afegeix_accio(self.__accions[j])
+                        fill.accions.insert(0,self.__accions[j])
                 # fica ses 'b' darreres accions de la mare
                 while b<len(other.accions)-1:
                     if fill.es_legal(other.accions[b],percep):
-                        fill.afegeix_accio(other.accions[b])
+                        fill.accions.insert(0,other.accions[b])
                         # Si ja ha arribat a la pizza, deixa de ficar accions
                         if fill.ha_arribat(percep):
                             break
@@ -228,11 +228,11 @@ class Individu:
                 fill = Individu(percep[ClauPercepcio.POSICIO]['Xavier'],None)
                 # fica ses 'a' primeres accions del pare
                 for j in range(b):
-                    fill.afegeix_accio(other.accions[j])
+                    fill.accions.insert(0,other.accions[j])
                 # fice ses 'b' darreres accions de la mare
                 while a<len(self.__accions)-1:
                     if fill.es_legal(self.__accions[a],percep):
-                        fill.afegeix_accio(self.__accions[a])
+                        fill.accions.insert(0,self.__accions[a])
                         # Si ja ha arribat a la pizza, deixa de ficar accions
                         if fill.ha_arribat(percep):
                             break
