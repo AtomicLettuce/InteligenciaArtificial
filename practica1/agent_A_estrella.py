@@ -10,6 +10,7 @@ from practica1 import joc
 from estat import Estat
 from queue import PriorityQueue
 from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
+import timeit
 
 
 class Rana_A_Estrella(joc.Rana):
@@ -19,6 +20,7 @@ class Rana_A_Estrella(joc.Rana):
         self.__oberts=None
         self.__tancats=None
         self.__accions=None
+        self.__temps = timeit.default_timer()
 
     def pinta(self, display):
         pass
@@ -35,6 +37,8 @@ class Rana_A_Estrella(joc.Rana):
         if self.__accions:
             acc=self.__accions.pop()
             return acc
+        
+        print("temps: "+ str(self.__temps-timeit.default_timer()))
         return AccionsRana.ESPERAR
         
         
@@ -46,12 +50,13 @@ class Rana_A_Estrella(joc.Rana):
 
         actual = None
 
+        # cerca fins haver explorat tots els nodes
         while  not self.__oberts.empty():
             _, actual=self.__oberts.get()
 
             if actual in self.__tancats:
                 continue
-
+            # si ja tenc solució, deixa de cercar
             if actual.es_meta(percep):                
                 break
 
@@ -62,6 +67,7 @@ class Rana_A_Estrella(joc.Rana):
             
             self.__tancats.add(actual)
 
+        # Extreure solució
         if actual.es_meta(percep):
             accions=[]
             iterador=actual

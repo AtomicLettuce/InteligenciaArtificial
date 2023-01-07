@@ -12,9 +12,14 @@ from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
 
 
 def main():
-    min = agent_minomax.agent_minomax("Xavier")
-    max = agent_minomax.agent_minomax("Lluis")
-    lab = joc.Laberint([min,max], parets=True)
+    #SEL·LECCIONAR AGENT
+
+    #rana = agent_desinformat.RanaDesinformada("Xavier")
+    rana = agent_A_estrella.Rana_A_Estrella("Xavier")
+    #rana = agent_genetic.RanaGenetica("Xavier")
+    #min = agent_minomax.agent_minomax("Xavier")
+    #max = agent_minomax.agent_minomax("Lluis")
+    lab = joc.Laberint([rana], parets=True)
     lab.comencar()
 
 

@@ -11,7 +11,10 @@ class agent_minomax(joc.Rana):
         
     def pinta(self, display):
         pass
-
+    
+    """"Algorisme de minimax, el torn_de_max es el que controla la profunditat i a la 
+    vegada de qui es el torn, es un int, si es parell es torn de max i senar de min, a cada
+    iteracio s'incremente en un fins arribar a la porfunditat desitjada"""
     def minimax(self,Estat,torn_de_max,):
         profunditat = 4
         if torn_de_max == profunditat:
@@ -22,6 +25,7 @@ class agent_minomax(joc.Rana):
 
             estats_fill = Estat.genera_fills_minimax()
             punmax = -999,None
+            #es mira la puntuacio de tots els fills i s'agafa aquell amb la major
             for i in range(len(estats_fill)):
                 puntuacio = self.minimax(estats_fill[i],torn_de_max+1) 
                 if puntuacio[0] >= punmax[0]:
@@ -38,7 +42,7 @@ class agent_minomax(joc.Rana):
                     punmin= puntuacio
             return punmin
         
-    
+    #per evaluar un cert estat es calcula la diferencia de distancies dde manhatan
     def evaluar(self,estat):
         
         return Estat.calcular_distanciaManhatan(estat)
@@ -46,21 +50,19 @@ class agent_minomax(joc.Rana):
     def pinta(self,display):
         pass
     
+    #minimax retorna un estat i una puntuacio, per lo que hem d'agafar nomes l'accio
     def cerca(self, estat):
         _,actual = self.minimax(estat,0)
         _, accio = actual.pare
         return accio
 
-    #fer que no comenci cada vegada per s'estat inicial
-    #nomes hi ha una accio cada vegada
+    #prepara l'estat en cada moment i crida a cerca
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
         noms = list(percep[ClauPercepcio.POSICIO].keys())
         noms.remove(self.nom)
         estat_inicial = Estat(percep.to_dict(),percep[ClauPercepcio.POSICIO][self.nom],None,nomMax = self.nom,nomMin = noms[0])
 
-
         accio =  self.cerca(estat_inicial)
-        #input()
         return accio
 
 
@@ -68,22 +70,10 @@ class agent_minomax(joc.Rana):
 
 
 
-"""
-Posicio granota
-percep[ClauPercepcio.POSICIO]['Miquel'][0]
-o
-self.info[0]
 
-Posicio Paret
-percep[ClauPercepcio.PARETs][0][0]
-
-Posicio pizza
-percep[ClauPercepio.OLOR][0]
-"""
 class Estat:
 
     def __init__(self,percep,pos, pare,nomMax,nomMin):
-        #posició es una tupla amb els agents i les seves posicions
         self.percep = percep
         self.nomMax = nomMax
         self.nomMin = nomMin
@@ -110,6 +100,7 @@ class Estat:
     def __setitem__(self, key, value):
         self.posicio[key] = value
 
+    """per mirar que sigui legal miram si esta "damunt" alguna cosa"""
     def es_legal(self,x,y) -> bool:
         
         for i in range(len(self.percep[ClauPercepcio.PARETS])):
@@ -135,7 +126,8 @@ class Estat:
 
 
 
-
+    """la distancia de manhatan es la diferencia de distancia en caselles
+    de l'objectiu"""
     def calcular_distanciaManhatan(self)->int:
         pos_pizza=self.percep[ClauPercepcio.OLOR]
         sum=0
@@ -157,7 +149,8 @@ class Estat:
         self.__pare = value
 
 
-
+    """Per cada estat es mira totes les possibles accions que te i si aquestes son legals
+    es crean els fills"""
     def genera_fills_minimax(self):
 
         fills=[]

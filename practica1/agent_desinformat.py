@@ -10,7 +10,6 @@ from practica1 import joc
 from practica1.estat import Estat
 from queue import PriorityQueue
 from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
-import time
 
 
 class RanaDesinformada(joc.Rana):   
@@ -24,6 +23,8 @@ class RanaDesinformada(joc.Rana):
     def pinta(self, display):
         pass
 
+
+    #metode de cerca vist a classe
     def cerca(self, estat, percep):
         self.__oberts = []
         self.__tancats = set()
@@ -62,7 +63,7 @@ class RanaDesinformada(joc.Rana):
             
             self.__accions=accions
 
-
+    #metode d'actua vist a classe
     def actua(self, percep: entorn.Percepcio) -> entorn.Accio | tuple[entorn.Accio, object]:
         estat_inicial = Estat(percep[ClauPercepcio.POSICIO]['Xavier'],0, pare = None)
         if self.__accions is None:
@@ -71,6 +72,7 @@ class RanaDesinformada(joc.Rana):
             if self.esta_botant():
                 return AccionsRana.ESPERAR
             return self.__accions.pop()
+        
         return AccionsRana.ESPERAR
 
 
