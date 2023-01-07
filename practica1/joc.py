@@ -6,7 +6,7 @@ import pygame
 from ia_2022 import agent as agent_lib
 from ia_2022 import entorn, joc
 from practica1.entorn import ClauPercepcio, AccionsRana, Direccio
-
+import timeit
 
 class TipusCas(enum.Enum):
     LLIURE = 0
@@ -144,6 +144,7 @@ class Laberint(joc.Joc):
         self.__caselles = []
         self.__mida_taulell = mida_taulell
         self.__fer_parets = parets
+        self.__temps = timeit.default_timer()
 
         for x in range(mida_taulell[0]):
             aux = []
@@ -219,6 +220,7 @@ class Laberint(joc.Joc):
                 agent_actual.posicio = (nc_x, nc_y)
 
                 if ha_menjat:
+                    print("temps: " +str(self.__temps-timeit.default_timer()))
                     print(f"Agent {agent_actual.nom} ha guanyat")
 
     def _draw(self) -> None:
